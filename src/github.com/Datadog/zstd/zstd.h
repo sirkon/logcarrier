@@ -125,6 +125,11 @@ ZSTDLIB_API const char* ZSTD_getErrorName(size_t code);     /*!< provides readab
 typedef struct ZSTD_CCtx_s ZSTD_CCtx;
 ZSTDLIB_API ZSTD_CCtx* ZSTD_createCCtx(void);
 ZSTDLIB_API size_t     ZSTD_freeCCtx(ZSTD_CCtx* cctx);
+ZSTDLIB_API void       ZSTD_clearCCtx(ZSTD_CCtx* cctx);
+
+/*====== Backup compressor ======*/
+ZSTDLIB_API size_t ZSTD_backupCCtx(ZSTD_CCtx* cctx);
+ZSTDLIB_API size_t ZSTD_restoreCCtx(ZSTD_CCtx* cctx);
 
 /*! ZSTD_compressCCtx() :
     Same as ZSTD_compress(), requires an allocated ZSTD_CCtx (see ZSTD_createCCtx()). */

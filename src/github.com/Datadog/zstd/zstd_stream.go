@@ -20,6 +20,7 @@ type Writer struct {
 
 	ctx              *C.ZSTD_CCtx
 	dict             []byte
+	backupDict       []byte
 	dstBuffer        []byte
 	firstError       error
 	underlyingWriter io.Writer
@@ -58,7 +59,6 @@ func NewWriterLevel(w io.Writer, level int) *Writer {
 func NewWriterLevelDict(w io.Writer, level int, dict []byte) *Writer {
 	var err error
 	ctx := C.ZSTD_createCCtx()
-
 	if dict == nil {
 		err = getError(int(C.ZSTD_compressBegin(ctx,
 			C.int(level))))
@@ -69,15 +69,25 @@ func NewWriterLevelDict(w io.Writer, level int, dict []byte) *Writer {
 			C.size_t(len(dict)),
 			C.int(level))))
 	}
-
 	return &Writer{
 		CompressionLevel: level,
 		ctx:              ctx,
 		dict:             dict,
+		backupDict:       make([]byte, len(dict)),
 		dstBuffer:        make([]byte, CompressBound(1024)),
 		firstError:       err,
 		underlyingWriter: w,
 	}
+}
+
+// Restart setting up the context for new comression
+func (w *Writer) Restart() {
+	err := getError(int(C.ZSTD_compressBegin_usingDict(
+		w.ctx,
+		unsafe.Pointer(&w.dict[0]),
+		C.size_t(len(w.dict)),
+		C.int(w.CompressionLevel))))
+	w.firstError = err
 }
 
 // Write writes a compressed form of p to the underlying io.Writer.
@@ -130,17 +140,39 @@ func (w *Writer) Close() error {
 		return err
 	}
 	written := int(retCode)
-	retCode = C.ZSTD_freeCCtx(w.ctx) // Safely close buffer before writing the end
-
-	if err := getError(int(retCode)); err != nil {
-		return err
-	}
+	C.ZSTD_clearCCtx(w.ctx) // Safely close buffer before writing the end
 
 	_, err := w.underlyingWriter.Write(w.dstBuffer[:written])
 	if err != nil {
 		return err
 	}
 	return nil
+}
+
+func (w *Writer) Free() error {
+	retCode := C.ZSTD_freeCCtx(w.ctx)
+	if err := getError(int(retCode)); err != nil {
+		return err
+	}
+	return nil
+}
+
+// Backup backups underlying foreign context and dictionary
+func (w *Writer) Backup() {
+	res := C.ZSTD_backupCCtx(w.ctx)
+	if err := getError(int(res)); err != nil {
+		panic(err)
+	}
+	copy(w.backupDict, w.dict)
+}
+
+// Restore restores underlying foreign context and dicitonary
+func (w *Writer) Restore() {
+	res := C.ZSTD_restoreCCtx(w.ctx)
+	if err := getError(int(res)); err != nil {
+		panic(err)
+	}
+	copy(w.dict, w.backupDict)
 }
 
 // reader is an io.ReadCloser that decompresses when read from.

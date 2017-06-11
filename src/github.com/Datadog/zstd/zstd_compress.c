@@ -12,6 +12,7 @@
 *  Dependencies
 ***************************************/
 #include <string.h>         /* memset */
+#include <stdio.h>
 #include "mem.h"
 #define XXH_STATIC_LINKING_ONLY   /* XXH64_state_t */
 #include "xxhash.h"               /* XXH_reset, update, digest */
@@ -84,6 +85,9 @@ struct ZSTD_CCtx_s {
     FSE_CTable matchlengthCTable[FSE_CTABLE_SIZE_U32(MLFSELog, MaxML)];
     FSE_CTable litlengthCTable  [FSE_CTABLE_SIZE_U32(LLFSELog, MaxLL)];
     unsigned tmpCounters[1024];
+
+
+    ZSTD_CCtx* backup;
 };
 
 ZSTD_CCtx* ZSTD_createCCtx(void)
@@ -102,15 +106,82 @@ ZSTD_CCtx* ZSTD_createCCtx_advanced(ZSTD_customMem customMem)
     if (!cctx) return NULL;
     memset(cctx, 0, sizeof(ZSTD_CCtx));
     cctx->customMem = customMem;
+    cctx->workSpaceSize = 0;
+    cctx->backup = (ZSTD_CCtx*) ZSTD_malloc(sizeof(ZSTD_CCtx), cctx->customMem);
+    cctx->backup->workSpaceSize = 0;
+    cctx->backup->workSpace = NULL;
     return cctx;
+}
+
+
+void ZSTD_clearCCtx(ZSTD_CCtx* cctx) {
+    ZSTD_customMem customMem = cctx->customMem;
+    void* workSpace = cctx->workSpace;
+    size_t workSpaceSize = cctx->workSpaceSize;
+    ZSTD_CCtx* backup = cctx->backup;
+    memset(cctx, 0, sizeof(ZSTD_CCtx));
+    cctx->backup = backup;
+    cctx->workSpace = workSpace;
+    cctx->workSpaceSize = workSpaceSize;
+    cctx->customMem = customMem;
 }
 
 size_t ZSTD_freeCCtx(ZSTD_CCtx* cctx)
 {
     if (cctx==NULL) return 0;   /* support free on NULL */
     ZSTD_free(cctx->workSpace, cctx->customMem);
+    if (cctx->backup != NULL) {
+        if (cctx->backup->workSpace != NULL) {
+            ZSTD_free(cctx->backup->workSpace, cctx->customMem);
+        }
+        ZSTD_free(cctx->backup, cctx->customMem);
+    }
     ZSTD_free(cctx, cctx->customMem);
     return 0;   /* reserved as a potential error code in the future */
+}
+
+size_t ZSTD_backupCCtx(ZSTD_CCtx* cctx) {
+    if (cctx->workSpaceSize > cctx->backup->workSpaceSize) {
+        if (cctx->backup->workSpace != NULL) {
+            ZSTD_free(cctx->backup->workSpace, cctx->customMem);
+        }
+        cctx->backup->workSpace = (ZSTD_CCtx*)ZSTD_malloc(cctx->workSpaceSize, cctx->customMem);
+        if (cctx->backup->workSpace == NULL) {
+            return ERROR(memory_allocation);
+        }
+        cctx->backup->workSpaceSize = cctx->workSpaceSize;
+    }
+    void *wspace = cctx->backup->workSpace;
+    size_t wspacesize = cctx->backup->workSpaceSize;
+    memcpy(cctx->backup, cctx, sizeof(ZSTD_CCtx));
+    memcpy(cctx->backup->workSpace, wspace, cctx->workSpaceSize);
+    cctx->backup->workSpace = wspace;
+    cctx->backup->workSpaceSize = wspacesize;
+    cctx->backup->hashTable = wspace + ((void*)cctx->hashTable - cctx->workSpace);
+    cctx->backup->hashTable3 = wspace + ((void*)cctx->hashTable3 - cctx->workSpace);
+    cctx->backup->chainTable = wspace + ((void*)cctx->chainTable - cctx->workSpace);
+    printf("%p %ld -> %p %ld, size %ld\n",
+           cctx->workSpace, cctx->workSpaceSize, cctx->backup->workSpace, cctx->backup->workSpaceSize,
+           sizeof(ZSTD_CCtx)
+    );
+    fflush(stdout);
+}
+
+size_t ZSTD_restoreCCtx(ZSTD_CCtx* cctx) {
+    ZSTD_CCtx *backup = cctx->backup;
+    void* wspace = cctx->workSpace;
+    size_t wspacesize = cctx->workSpaceSize;
+    memcpy(cctx, cctx->backup, sizeof(ZSTD_CCtx));
+    printf("%p %ld <- %p %ld\n", wspace, wspacesize, backup->workSpace, backup->workSpaceSize);
+    fflush(stdout);
+    memcpy(wspace, backup->workSpace, backup->workSpaceSize);
+    cctx->backup = backup;
+    cctx->workSpace = wspace;
+    cctx->workSpaceSize = wspacesize;
+    cctx->hashTable = wspace + ((void*)backup->hashTable - backup->workSpace);
+    cctx->hashTable3 = wspace + ((void*)backup->hashTable3 - backup->workSpace);
+    cctx->chainTable = wspace + ((void*)backup->chainTable - backup->workSpace);
+    return 0;
 }
 
 size_t ZSTD_sizeof_CCtx(const ZSTD_CCtx* cctx)
@@ -274,9 +345,12 @@ static size_t ZSTD_resetCCtx_advanced (ZSTD_CCtx* zc,
             if (zc->workSpaceSize < neededSpace) {
                 ZSTD_free(zc->workSpace, zc->customMem);
                 zc->workSpace = ZSTD_malloc(neededSpace, zc->customMem);
+                printf("!!!! %p %ld\n", zc->workSpace, neededSpace);
+                fflush(stdout);
                 if (zc->workSpace == NULL) return ERROR(memory_allocation);
                 zc->workSpaceSize = neededSpace;
-        }   }
+            }
+        }
 
         if (crp!=ZSTDcrp_noMemset) memset(zc->workSpace, 0, tableSpace);   /* reset tables only */
         XXH64_reset(&zc->xxhState, 0);

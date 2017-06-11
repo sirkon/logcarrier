@@ -16,10 +16,11 @@ func failOnError(t *testing.T, msg string, err error) {
 
 func testCompressionDecompression(t *testing.T, dict []byte, payload []byte) {
 	var w bytes.Buffer
-	writer := NewWriterLevelDict(&w, DefaultCompression, dict)
+	writer := NewWriterLevelDict(&w, DefaultCompression, make([]byte, 1024))
 	_, err := writer.Write(payload)
 	failOnError(t, "Failed writing to compress object", err)
 	failOnError(t, "Failed to close compress object", writer.Close())
+	writer.Free()
 	out := w.Bytes()
 	t.Logf("Compressed %v -> %v bytes", len(payload), len(out))
 	failOnError(t, "Failed compressing", err)
