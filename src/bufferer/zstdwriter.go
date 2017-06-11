@@ -31,3 +31,14 @@ func (w *ZSTDWriter) Close() error {
 	w.w = w.factory()
 	return nil
 }
+
+// Free ...
+func (w *ZSTDWriter) Free() error {
+	return w.Free()
+}
+
+// Reset ...
+func (w *ZSTDWriter) Reset() error {
+	w.w.Restart()
+	return nil
+}

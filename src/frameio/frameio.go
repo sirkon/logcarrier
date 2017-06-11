@@ -9,6 +9,8 @@ decompressed.
 package frameio
 
 import (
+	"bindec"
+	"binenc"
 	"bytes"
 	"io"
 )
@@ -84,4 +86,53 @@ func (w *Writer) WorthFlushing() bool {
 	w.prevFlushCounter = w.flushCounter
 	w.worthFlushing = true
 	return res
+}
+
+// DumpState ...
+func (w *Writer) DumpState(enc *binenc.Encoder, dest *bytes.Buffer) {
+	dest.Write(enc.Uint32(uint32(w.bufsize)))
+	dest.Write(enc.Uint32(uint32(w.buffer.Len())))
+	dest.Write(enc.Uint32(uint32(w.flushCounter)))
+	dest.Write(enc.Uint32(uint32(w.frameInsert)))
+	dest.Write(enc.Uint32(uint32(w.prevFlushCounter)))
+	dest.Write(enc.Bool(w.worthFlushing))
+}
+
+// RestoreState ...
+func (w *Writer) RestoreState(src *bindec.Decoder) {
+	bufsize, ok := src.Uint32()
+	if !ok {
+		panic("Cannot restore bufsize")
+	}
+	buflen, ok := src.Uint32()
+	if !ok {
+		panic("Cannot restore buffer length")
+	}
+	buffer, ok := src.Bytes(int(buflen))
+	if !ok {
+		panic("Cannot restore a buffer")
+	}
+	flushcounter, ok := src.Uint32()
+	if !ok {
+		panic("Cannot restore flush counter")
+	}
+	frameInsert, ok := src.Uint32()
+	if !ok {
+		panic("Cannot restore frame insert")
+	}
+	prevFlushCounter, ok := src.Uint32()
+	if !ok {
+		panic("Cannot restore previous flush counter value")
+	}
+	worthFlushing, ok := src.Bool()
+	if !ok {
+		panic("Cannot restore worth flushing indicator")
+	}
+	w.bufsize = int(bufsize)
+	w.buffer.Reset()
+	w.buffer.Write(buffer)
+	w.flushCounter = int(flushcounter)
+	w.frameInsert = int(frameInsert)
+	w.prevFlushCounter = int(prevFlushCounter)
+	w.worthFlushing = worthFlushing
 }
