@@ -28,7 +28,6 @@ func (w *ZSTDWriter) Close() error {
 	if err := w.w.Close(); err != nil {
 		return err
 	}
-	w.w = w.factory()
 	return nil
 }
 

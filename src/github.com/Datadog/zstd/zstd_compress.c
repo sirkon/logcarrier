@@ -160,11 +160,11 @@ size_t ZSTD_backupCCtx(ZSTD_CCtx* cctx) {
     cctx->backup->hashTable = wspace + ((void*)cctx->hashTable - cctx->workSpace);
     cctx->backup->hashTable3 = wspace + ((void*)cctx->hashTable3 - cctx->workSpace);
     cctx->backup->chainTable = wspace + ((void*)cctx->chainTable - cctx->workSpace);
-    printf("%p %ld -> %p %ld, size %ld\n",
-           cctx->workSpace, cctx->workSpaceSize, cctx->backup->workSpace, cctx->backup->workSpaceSize,
-           sizeof(ZSTD_CCtx)
-    );
-    fflush(stdout);
+//    printf("%p %ld -> %p %ld, size %ld\n",
+//           cctx->workSpace, cctx->workSpaceSize, cctx->backup->workSpace, cctx->backup->workSpaceSize,
+//           sizeof(ZSTD_CCtx)
+//    );
+//    fflush(stdout);
 }
 
 size_t ZSTD_restoreCCtx(ZSTD_CCtx* cctx) {
@@ -172,8 +172,8 @@ size_t ZSTD_restoreCCtx(ZSTD_CCtx* cctx) {
     void* wspace = cctx->workSpace;
     size_t wspacesize = cctx->workSpaceSize;
     memcpy(cctx, cctx->backup, sizeof(ZSTD_CCtx));
-    printf("%p %ld <- %p %ld\n", wspace, wspacesize, backup->workSpace, backup->workSpaceSize);
-    fflush(stdout);
+//    printf("%p %ld <- %p %ld\n", wspace, wspacesize, backup->workSpace, backup->workSpaceSize);
+//    fflush(stdout);
     memcpy(wspace, backup->workSpace, backup->workSpaceSize);
     cctx->backup = backup;
     cctx->workSpace = wspace;
@@ -345,8 +345,8 @@ static size_t ZSTD_resetCCtx_advanced (ZSTD_CCtx* zc,
             if (zc->workSpaceSize < neededSpace) {
                 ZSTD_free(zc->workSpace, zc->customMem);
                 zc->workSpace = ZSTD_malloc(neededSpace, zc->customMem);
-                printf("!!!! %p %ld\n", zc->workSpace, neededSpace);
-                fflush(stdout);
+//                printf("!!!! %p %ld\n", zc->workSpace, neededSpace);
+//                fflush(stdout);
                 if (zc->workSpace == NULL) return ERROR(memory_allocation);
                 zc->workSpaceSize = neededSpace;
             }

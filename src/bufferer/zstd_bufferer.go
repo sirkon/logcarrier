@@ -72,6 +72,7 @@ func (b *ZSTDBufferer) Flush() error {
 		if err := b.c.Close(); err != nil {
 			return err
 		}
+		b.c.Reset()
 		if err := b.f.Flush(); err != nil {
 			return err
 		}
