@@ -151,27 +151,29 @@ func (f *File) Logrotate(dir, name, group string) error {
 }
 
 // DumpState ...
-func (f *File) DumpState(enc *binenc.Encoder, dest *bytes.Buffer) {
+func (f *File) DumpState(enc *binenc.Encoder, dest *bytes.Buffer) error {
 	if f.file == nil {
 		if err := f.open(); err != nil {
-			panic(err)
+			return err
 		}
 	}
 	pos, err := f.file.Seek(0, os.SEEK_CUR)
 	if err != nil {
-		panic(err)
+		return err
 	}
 	dest.Write(enc.Int64(pos))
+	return nil
 }
 
 // RestoreState ...
-func (f *File) RestoreState(src *bindec.Decoder) {
+func (f *File) RestoreState(src *bindec.Decoder) error {
 	pos, ok := src.Int64()
 	if !ok {
-		panic("Cannot restore position in the file")
+		return fmt.Errorf("Cannot restore position in the file")
 	}
 	err := f.file.Truncate(pos)
 	if err != nil {
-		panic(fmt.Errorf("Cannot restore position in the file: %s", err))
+		return fmt.Errorf("Cannot restore position in the file: %s", err)
 	}
+	return nil
 }

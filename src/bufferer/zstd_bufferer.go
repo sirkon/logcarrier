@@ -87,17 +87,23 @@ func (b *ZSTDBufferer) Logrotate(dir, name, group string) error {
 }
 
 // DumpState implementation
-func (b *ZSTDBufferer) DumpState(enc *binenc.Encoder, dest *bytes.Buffer) {
+func (b *ZSTDBufferer) DumpState(enc *binenc.Encoder, dest *bytes.Buffer) error {
 	b.l.DumpState(enc, dest)
 	b.c.w.Backup()
 	b.f.DumpState(enc, dest)
-	b.d.DumpState(enc, dest)
+	if err := b.d.DumpState(enc, dest); err != nil {
+		return err
+	}
+	return nil
 }
 
 // RestoreState implementation
-func (b *ZSTDBufferer) RestoreState(src *bindec.Decoder) {
+func (b *ZSTDBufferer) RestoreState(src *bindec.Decoder) error {
 	b.l.RestoreState(src)
 	b.c.w.Restore()
 	b.f.RestoreState(src)
-	b.d.RestoreState(src)
+	if err := b.d.RestoreState(src); err != nil {
+		return err
+	}
+	return nil
 }

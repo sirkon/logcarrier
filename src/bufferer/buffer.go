@@ -30,8 +30,8 @@ type Bufferer interface {
 	Logrotate(dir, name, group string) error
 
 	// DumpState dumps the state of the bufferer object
-	DumpState(enc *binenc.Encoder, dest *bytes.Buffer)
+	DumpState(enc *binenc.Encoder, dest *bytes.Buffer) error
 
 	// RestoreState restores the state of the bufferer object
-	RestoreState(src *bindec.Decoder)
+	RestoreState(src *bindec.Decoder) error
 }

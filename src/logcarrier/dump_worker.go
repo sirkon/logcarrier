@@ -108,12 +108,16 @@ func (dp *DumpPool) dump(x DumpJob, w *worker, e *binenc.Encoder, d *bindec.Deco
 	buf.Lock.Lock()
 	dest := dp.pool.Get().(*bytes.Buffer)
 	dest.Reset()
-	buf.Buf.DumpState(e, dest)
+	if nerr := buf.Buf.DumpState(e, dest); nerr != nil {
+		return nerr
+	}
 	buf.Counter = 3
 	err = dp.communicate(x, w, buf.Buf)
 	if err != nil {
 		d.SetSource(dest.Bytes())
-		buf.Buf.RestoreState(d)
+		if nerr := buf.Buf.RestoreState(d); nerr != nil {
+			logging.Error("%s", nerr)
+		}
 	}
 	dp.pool.Put(dest)
 	buf.Lock.Unlock()

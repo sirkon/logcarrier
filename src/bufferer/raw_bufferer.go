@@ -59,13 +59,19 @@ func (b *RawBufferer) Logrotate(dir, name, group string) error {
 }
 
 // DumpState implementation
-func (b *RawBufferer) DumpState(enc *binenc.Encoder, dest *bytes.Buffer) {
+func (b *RawBufferer) DumpState(enc *binenc.Encoder, dest *bytes.Buffer) error {
 	b.l.DumpState(enc, dest)
-	b.d.DumpState(enc, dest)
+	if err := b.d.DumpState(enc, dest); err != nil {
+		return err
+	}
+	return nil
 }
 
 // RestoreState implementation
-func (b *RawBufferer) RestoreState(src *bindec.Decoder) {
+func (b *RawBufferer) RestoreState(src *bindec.Decoder) error {
 	b.l.RestoreState(src)
-	b.l.RestoreState(src)
+	if err := b.d.RestoreState(src); err != nil {
+		return err
+	}
+	return nil
 }
