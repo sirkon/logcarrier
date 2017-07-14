@@ -50,6 +50,28 @@ func Open(dir, name, group string, namegen, linkgen paths.Paths, dirmode os.File
 	return file, err
 }
 
+// stripMutualPrefix strips maximal mutual prefix between path and sample from path and returns stripped value
+func stripMutualPrefix(path, sample string) string {
+	if path == sample {
+		return ""
+	}
+	upper := len(sample)
+	lower := 0
+	for upper-lower > 1 {
+		if path[:upper] == sample[:upper] {
+			lower = upper
+			break
+		}
+		c := (lower + upper) / 2
+		if path[:c] == sample[:c] {
+			lower = c
+		} else {
+			upper = c
+		}
+	}
+	return path[lower:]
+}
+
 func (f *File) open() (err error) {
 	t := time.Now()
 
@@ -76,8 +98,8 @@ func (f *File) open() (err error) {
 		if err != nil {
 			return fmt.Errorf("File `%s` exists and it is not a link", lname)
 		}
-		if dest != fname {
-			return fmt.Errorf("Link `%s` exists but it does not refer to `%s`", lname, fname)
+		if dest != fname && dest != stripMutualPrefix(fname, lname) {
+			return fmt.Errorf("Link `%s` exists but it does not refer to `%s` (->`%s`)", lname, fname, dest)
 		}
 	} else {
 		if err = os.Symlink(fname, lname); err != nil {
