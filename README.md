@@ -22,13 +22,13 @@ buffers:
   framing: 256Kb                 # Same format. this buffer ensures frame integrity which is critically important
                                  # for compressed output: broken frame will cause decompressing errors
   zstdict: 128Kb                 # ZSTD compression dictionary size. Probably a good thing
-  connections: 1024              # How many connections to allow at the moment
-  dumps: 512                     # Dumping file is a task too. How many dumping tasks to can be set without a service denial.
-  logrotates: 512                # Same as previous, just for log rotation
+  connections: 1024              # How many connections attempts to allow at the moment
+  dumps: 512                     # This is the length of the queue of connections from tailers awaiting for dumping their data.
+  logrotates: 512                # How many log rotating tasks to queue without a block.
 
 workers:
   route: 1024                    # How many workers process incoming connections
-  dumper: 24                     # How many workers process dumping data
+  dumper: 24                     # How many workers process data from tailers.
   logrotater: 12                 # How many log rotation workers
 
   flusher_sleep: 30s             # Intervals for force flush
