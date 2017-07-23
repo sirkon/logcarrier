@@ -1,5 +1,5 @@
 # logcarrier
-Logfile tailing/delivery system
+Logfile tailing/delivery system. Initially forked from https://github.com/Boiler/logcarrier and completely rewrite (python tailer left untouched though) since then.
 
 Config format:
 
