@@ -7,60 +7,59 @@ import (
 	"time"
 
 	cron "gopkg.in/robfig/cron.v2"
-
-	"github.com/BurntSushi/toml"
+	yaml "gopkg.in/yaml.v2"
 )
 
 // Config structure
 type Config struct {
-	Listen      string   `toml:"listen"`
-	ListenDebug string   `toml:"listen_debug"`
-	WaitTimeout Duration `toml:"wait_timeout"`
-	Key         string   `toml:"key"`
-	LogFile     string   `toml:"logfile"`
+	Listen      string   `yaml:"listen"`
+	ListenDebug string   `yaml:"listen_debug"`
+	WaitTimeout Duration `yaml:"wait_timeout"`
+	Key         string   `yaml:"key"`
+	LogFile     string   `yaml:"logfile"`
 
 	Compression struct {
-		Method CompressionMethod `toml:"method"`
-		Level  uint              `toml:"level"`
-	} `toml:"compression"`
+		Method CompressionMethod `yaml:"method"`
+		Level  uint              `yaml:"level"`
+	} `yaml:"compression"`
 
 	Buffers struct {
-		Input   Size `toml:"input"`
-		Framing Size `toml:"framing"`
-		ZSTDict Size `toml:"zstdict"`
+		Input   Size `yaml:"input"`
+		Framing Size `yaml:"framing"`
+		ZSTDict Size `yaml:"zstdict"`
 
-		Connections int `toml:"connections"`
-		Dumps       int `toml:"dumps"`
-		Logrotates  int `toml:"logrotates"`
-	} `toml:"buffers"`
+		Connections int `yaml:"connections"`
+		Dumps       int `yaml:"dumps"`
+		Logrotates  int `yaml:"logrotates"`
+	} `yaml:"buffers"`
 
 	Workers struct {
-		Router     int `toml:"route"`
-		Dumper     int `toml:"dumper"`
-		Logrotater int `toml:"logrotater"`
+		Router     int `yaml:"route"`
+		Dumper     int `yaml:"dumper"`
+		Logrotater int `yaml:"logrotater"`
 
-		FlusherSleep Duration `toml:"flusher_sleep"`
-	} `toml:"workers"`
+		FlusherSleep Duration `yaml:"flusher_sleep"`
+	} `yaml:"workers"`
 
 	Files struct {
-		Root     string      `toml:"root"`
-		RootMode os.FileMode `toml:"root_mode"`
-		Name     string      `toml:"name"`
-		Rotation string      `toml:"rotation"`
-	} `toml:"files"`
+		Root     string      `yaml:"root"`
+		RootMode os.FileMode `yaml:"root_mode"`
+		Name     string      `yaml:"name"`
+		Rotation string      `yaml:"rotation"`
+	} `yaml:"files"`
 
 	Links struct {
 		enabled  bool
-		Root     string      `toml:"root"`
-		RootMode os.FileMode `toml:"root_mode"`
-		Name     string      `toml:"name"`
-		Rotation string      `toml:"rotation"`
-	} `toml:"links"`
+		Root     string      `yaml:"root"`
+		RootMode os.FileMode `yaml:"root_mode"`
+		Name     string      `yaml:"name"`
+		Rotation string      `yaml:"rotation"`
+	} `yaml:"links"`
 
 	Logrotate struct {
-		Method   LogrotateMethod `toml:"method"`
-		Schedule string          `toml:"schedule"`
-	} `toml:"logrotate"`
+		Method   LogrotateMethod `yaml:"method"`
+		Schedule string          `yaml:"schedule"`
+	} `yaml:"logrotate"`
 }
 
 // sensible defaults
@@ -109,7 +108,7 @@ func LoadConfig(filePath string) (res Config) {
 	if err != nil {
 		return
 	}
-	if err = toml.Unmarshal(data, &res); err != nil {
+	if err = yaml.Unmarshal(data, &res); err != nil {
 		return
 	}
 	lengths := map[string]string{
@@ -134,6 +133,7 @@ func LoadConfig(filePath string) (res Config) {
 		return
 	}
 
+	//
 	max := 0
 	maxarg := ""
 	maxv := ""

@@ -8,12 +8,13 @@ import (
 // Duration is for time interval TOML unmarshaling
 type Duration time.Duration
 
-// UnmarshalText toml unmarshaling implementation
-func (d *Duration) UnmarshalText(rawText []byte) error {
-	res, err := time.ParseDuration(string(rawText))
+// UnmarshalYAML implementation
+func (d *Duration) UnmarshalYAML(data []byte) error {
+	res, err := time.ParseDuration(string(data))
 	if err != nil {
-		return fmt.Errorf("Cannot parse `%s` as duration", string(rawText))
+		return fmt.Errorf("Cannot parse `%s` as duration", string(data))
 	}
 	*d = Duration(res)
 	return nil
+
 }

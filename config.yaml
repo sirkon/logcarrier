@@ -1,0 +1,21 @@
+compression:
+  method: zstd
+  level: 6
+
+buffers:
+  input: 128Kb
+  framing: 256Kb
+
+files:
+  root: /home/emacs/Sources/logcarrier/logs
+  name: /${dir}/${name}.zst
+  rotation: /${dir}/${name}.zst
+
+links:
+  root: /home/emacs/Sources/logcarrier/logs
+  name: /${dir}/${ time | %Y/%m/%d }/${name}-${time | %Y.%m.%d-%H }.zst
+  rotation: /${dir}/${ time | %Y/%m/%d }/${name}-${ time | %Y.%m.%d-%H:%M }.zst
+
+logrotate:
+  method: periodic
+  schedule: "*/1 * * * *"
