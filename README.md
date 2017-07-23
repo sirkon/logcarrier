@@ -3,48 +3,49 @@ Logfile tailing/delivery system. Initially forked from https://github.com/Boiler
 
 Config format:
 
-```toml
-listen=":1146"
-listen_debug=":40000"              # HTTP server will be started, useful to check availability
-wait_timeout="1m13s"
-LogFile="/var/log/logcarrier/log"  # stderr will be used if this parameter is not set
+```yaml
+listen: 0.0.0.0:1146
+listen_debug: 0.0.0.0:40000      # This port can be connected to check service availability
+wait_timeout: 1m13s
+key: '123123123123'
+logfile:                         # stderr will be used if this parameter is not set
 
-[compression]
-method="zstd"                      # Can be `zstd` or `raw`
-level=6
+compression:
+  method: zstd                   # Can be `zstd` or `raw` for no compression
+  level: 6
 
-[buffers]
-input="128Kb"                      # Kb, Mb, Gb can be used here (or nothing). Input buffer right from the connection.
-framing="256Kb"                    # Same format. Framing buffer after compression to ensure compressed frame integrity.
-zstdict="128Kb"                    # Same format. ZSTD compression dictionary size.
-connections=1024                   # Depth of queue for connections
-dumps=512                          # Depth of dumping tasks' queue
-logrotates=512                     # Depth of logrotating tasks' queue
+buffers:  
+  # Buffer order is: tailer -> input buffer -> [compressor ->] frame buffer -> disk
+  
+  input: 128Kb                   # Kb, Mb, Gb can be used (or just number in bytes). This is input buffer
+                                 # that guranties line integrity
+  framing: 256Kb                 # Same format. this buffer ensures frame integrity which is critically important
+                                 # for compressed output: broken frame will cause decompressing errors
+  zstdict: 128Kb                 # ZSTD compression dictionary size. Probably a good thing
+  connections: 1024              # How many connections to allow at the moment
+  dumps: 512                     # Dumping file is a task too. How many dumping tasks to can be set without a service denial.
+  logrotates: 512                # Same as previous, just for log rotation
 
-[workers]
-route=1024                         # Amount of workers to process and route incoming connection
-dumper=24                          # Amount of workers reading data from tailers
-logrotater=12                      # Amount of workers what logrotate on LOGROTATE request
+workers:
+  route: 1024                    # How many workers process incoming connections
+  dumper: 24                     # How many workers process dumping data
+  logrotater: 12                 # How many log rotation workers
 
-flusher_sleep="30s"                # Intervals for force flusher sleep
+  flusher_sleep: 30s             # Intervals for force flush
 
-[files]
-root="/var/logs/logcarrier"                     # Root directory to put logs in
-root_mode=0755                                  # Mode for directories what are creating in process
-name="/${dir}/${name}"                          # File name template
-rotation="/${dir}/${name}-${ time | %Y%m%d%H }" # Rename file into this name on rotation.
-                                                # Available vars:
-                                                #   time:  time
-                                                #   dir:   string
-                                                #   name:  string
-                                                #   group: string
-      
-[links]
-root="/var/logs/logcarrier"                                    # Same as for files
-name="/${dir}/${ time | %Y/%m/%d }/${name}-${ time | %H}"      # Name for the link that follows current file
-rotation="/${dir}/${ time | %Y/%m/%d }/${name}-${ time | %H}"  # Same as for files
+files:
+  root: /var/logs/logcarrier                  # Root directory
+  root_mode: 0755                             # Mode for subdirectories creating in a process
+  name: /$dir/$name-${time | %Y%m%d%H }       # File name template
+  rotation: /$dir/$name-${ time | %Y%m%d%H }  # Rename to on rotation. This time the same name.
 
-[logrotate]
-method="periodic"                  # can be `periodic`, `guided` (via protocol) and `both`
-schedule="* */1 * * *"             # start log rotation tasks at the start of each hour
+links:                           # Same as with files
+  root: ..
+  root_mode: ..
+  name: ..
+  rotation: ..
+
+logrotate:
+  method: periodic              # Can be `periodic`, `guided` (via protocol) and `both`
+  schedule: "* */1 * * *"       # Log rotation start schedule
 ```
