@@ -21,7 +21,7 @@ buffers:
                                  # that guranties line integrity
   framing: 256Kb                 # Same format. this buffer ensures frame integrity which is critically important
                                  # for compressed output: broken frame will cause decompressing errors
-  zstdict: 128Kb                 # ZSTD compression dictionary size. Probably a good thing
+  zstdict: 128Kb                 # ZSTD compression dictionary size. They say this accelerates compression speed.
   connections: 1024              # How many connections attempts to allow at the moment
   dumps: 512                     # This is the length of the queue of connections from tailers awaiting for dumping their data.
   logrotates: 512                # How many log rotating tasks to queue without a block.
@@ -36,7 +36,9 @@ workers:
 files:
   root: /var/logs/logcarrier                  # Root directory
   root_mode: 0755                             # Mode for subdirectories creating in a process
-  name: /$dir/$name-${time | %Y%m%d%H }       # File name template
+  name: /$dir/$name-${time | %Y%m%d%H }       # File name template. This is a good idea to give file an already rotated name 
+                                              # (date, hour, minute, etc) and use link with "original" file name pointed at the  
+                                              # currently writing part
   rotation: /$dir/$name-${ time | %Y%m%d%H }  # Rename to on rotation. This time the same name.
 
 links:                           # Same as with files
