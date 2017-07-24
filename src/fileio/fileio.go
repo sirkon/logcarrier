@@ -51,6 +51,17 @@ func Open(dir, name, group string, namegen, linkgen paths.Paths, dirmode os.File
 }
 
 func (f *File) open() (err error) {
+	defer func() {
+		if err != nil {
+			if f.file != nil {
+				nerr := f.file.Close()
+				if nerr != nil {
+					logging.Warning("%s", err)
+				}
+			}
+		}
+	}()
+
 	t := time.Now()
 
 	fname := f.namegen.Name(f.dir, f.name, f.group, t)
