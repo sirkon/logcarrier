@@ -133,7 +133,7 @@ func LoadConfig(filePath string) (res Config) {
 		return
 	}
 
-	//
+	// We demand all links name data (root, name, rotation) must be set up with non empty value or they all must be empty
 	max := 0
 	maxarg := ""
 	maxv := ""
