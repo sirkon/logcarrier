@@ -1,7 +1,12 @@
 # logcarrier
-Logfile tailing/delivery system. Initially forked from https://github.com/Boiler/logcarrier with a strong intention to completely rewrite it. Done.
+Logfile tailing/delivery system. Initially forked from https://github.com/Boiler/logcarrier with a strong intention to completely rewrite it for better configurability and features.
 
-Config format:
+# What has been added so far
+1. Configured name based on input parameters. Name after log rotation.
+2. Link for a file with similar features (current and after log rotation names)
+3. ZSTD on the fly compression (can be memory hungry).
+
+# Config format
 
 ```yaml
 listen: 0.0.0.0:1146
