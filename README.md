@@ -9,6 +9,7 @@ Logfile tailing/delivery system. Initially forked from https://github.com/Boiler
 # Stability and code quality
 1. The core was written in a couple of days in a hurry, thus some parts of code and design choices are questionable.
 2. I quit my job I was writing this for and prefered not to contact them after that, so there were no real tests. `raw` compression method should work though, not so sure about `zstd` - previous version which was based on vanilla ZSTD library worked, current one uses tweaked library version to implement rollback functionality.
+
 Anyway, feel free to report and contribute.
 
 # Config format
