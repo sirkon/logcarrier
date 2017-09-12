@@ -7,7 +7,7 @@ Logfile tailing/delivery system. Initially forked from https://github.com/Boiler
 3. ZSTD on the fly compression (can be memory hungry).
 
 # Stability and code quality
-1. The core was written in a couple of days in a hurry, thus some parts of code and choices are questionable.
+1. The core was written in a couple of days in a hurry, thus some parts of code and design choices are questionable.
 2. I quit my job I was writing this for and prefered not to contact them after that, so there were no real tests.
 
 # Config format
