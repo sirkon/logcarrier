@@ -1,11 +1,16 @@
 # logcarrier
 Logfile tailing/delivery system. Initially forked from https://github.com/Boiler/logcarrier with a strong intention to completely rewrite it for better configurability and features.
 
+Installation:
+```
+go get -u github.com/sirkon/logcarrier
+```
+
 # What has been added or changed so far
 1. Configured name based on input parameters. Name after log rotation.
 2. Link for a file with similar features (current and after log rotation names)
 3. ZSTD on the fly compression (can be memory hungry).
-4. Use YAML instead of TOML for config. TOML can be easier to parse but its Go library is pretty poor in error handling and it doesn't support octal numbers (to describe directory rights) and things like `128Kb` at place.
+4. Use YAML instead of TOML for config. TOML can be easier to parse but its Go library is pretty poor in error handling and TOML itself doesn't support octal numbers (to describe directory rights) and things like `128Kb` at place.
 
 # Stability and code quality
 1. The core was written in a couple of days in a hurry, thus some parts of code and design choices are questionable.
