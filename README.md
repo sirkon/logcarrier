@@ -5,6 +5,11 @@ Installation:
 ```
 go get -u github.com/sirkon/logcarrier
 ```
+How it works:
+1. There are [tailers](tail/logcarrier-tail.py) sending log data to logcarrier server
+2. `logcarrier` server what receives these files and save them under arbitrary names, optionally making links to them and:
+    1. optional ZSTD compression
+    2. mandatory logrotation at customizable schedule
 
 # Features
 1. Configured file names based on input parameters. Different setups for "original" and "log rotated" file names.
@@ -54,7 +59,7 @@ workers:
 files:
   root: /var/logs/logcarrier                  # Root directory
   root_mode: 0755                             # Mode for subdirectories creating in a process
-  name: /$dir/$name-${time | %Y%m%d%H }       # File name template. This is a good idea to give file an already rotated name 
+  name: /$dir/$name-${ time | %Y%m%d%H }       # File name template. This is a good idea to give file an already rotated name 
                                               # (date, hour, minute, etc) and use link with "original" file name pointed at the  
                                               # currently writing part
   rotation: /$dir/$name-${ time | %Y%m%d%H }  # Rename to on rotation. This time the same name.
