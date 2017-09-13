@@ -1,24 +1,25 @@
 package main
 
 import (
-	"bufferer"
-	"fileio"
 	"flag"
 	"fmt"
-	"frameio"
-	"logging"
-	"logio"
 	"net"
 	"net/http"
 	"os"
 	"os/signal"
-	"paths"
-	"periodic"
 	"syscall"
 	"time"
-	"utils"
 
-	"github.com/Datadog/zstd"
+	"github.com/sirkon/logcarrier/bufferer"
+	"github.com/sirkon/logcarrier/fileio"
+	"github.com/sirkon/logcarrier/frameio"
+	"github.com/sirkon/logcarrier/logging"
+	"github.com/sirkon/logcarrier/logio"
+	"github.com/sirkon/logcarrier/paths"
+	"github.com/sirkon/logcarrier/periodic"
+	"github.com/sirkon/logcarrier/utils"
+
+	"github.com/sirkon/logcarrier/zstd"
 )
 
 func main() {

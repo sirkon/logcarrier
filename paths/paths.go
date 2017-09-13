@@ -1,9 +1,10 @@
 package paths
 
 import (
-	format "formatter"
 	"path/filepath"
 	"time"
+
+	format "github.com/sirkon/logcarrier/formatter"
 )
 
 // Paths is an interface for path name generation

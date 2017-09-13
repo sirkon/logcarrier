@@ -5,16 +5,17 @@ package fileio
 package fileio
 
 import (
-	"bindec"
-	"binenc"
 	"bytes"
 	"fmt"
-	"logging"
 	"os"
 	"path/filepath"
-	"paths"
 	"time"
-	"utils"
+
+	"github.com/sirkon/logcarrier/bindec"
+	"github.com/sirkon/logcarrier/binenc"
+	"github.com/sirkon/logcarrier/logging"
+	"github.com/sirkon/logcarrier/paths"
+	"github.com/sirkon/logcarrier/utils"
 )
 
 // File object that is steady against rotating.

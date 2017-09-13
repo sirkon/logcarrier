@@ -1,11 +1,12 @@
 package bufferer
 
 import (
-	"bindec"
-	"binenc"
 	"bytes"
-	"fileio"
-	"logio"
+
+	"github.com/sirkon/logcarrier/bindec"
+	"github.com/sirkon/logcarrier/binenc"
+	"github.com/sirkon/logcarrier/fileio"
+	"github.com/sirkon/logcarrier/logio"
 )
 
 // RawBufferer ...

@@ -5,9 +5,10 @@ package bufferer provides
 package bufferer
 
 import (
-	"bindec"
-	"binenc"
 	"bytes"
+
+	"github.com/sirkon/logcarrier/bindec"
+	"github.com/sirkon/logcarrier/binenc"
 )
 
 // Bufferer is an interface that groups set of methods that are

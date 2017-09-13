@@ -9,10 +9,11 @@ decompressed.
 package frameio
 
 import (
-	"bindec"
-	"binenc"
 	"bytes"
 	"io"
+
+	"github.com/sirkon/logcarrier/bindec"
+	"github.com/sirkon/logcarrier/binenc"
 )
 
 const (

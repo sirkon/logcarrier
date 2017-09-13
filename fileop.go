@@ -1,14 +1,14 @@
 package main
 
 import (
-	"bufferer"
 	"fmt"
-	"logging"
 	"path/filepath"
 	"sync"
 	"time"
 
 	"github.com/LK4D4/trylock"
+	"github.com/sirkon/logcarrier/bufferer"
+	"github.com/sirkon/logcarrier/logging"
 )
 
 // Buf access

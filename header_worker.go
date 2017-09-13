@@ -1,15 +1,16 @@
 package main
 
 import (
-	"cheapbuf"
-	"connio"
 	"fmt"
-	"logging"
 	"net"
 	"sync"
 	"time"
 	"unsafe"
-	"utils"
+
+	"github.com/sirkon/logcarrier/cheapbuf"
+	"github.com/sirkon/logcarrier/connio"
+	"github.com/sirkon/logcarrier/logging"
+	"github.com/sirkon/logcarrier/utils"
 )
 
 // HeaderJob receives net.Conn item to route it further

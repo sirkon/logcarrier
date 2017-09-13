@@ -6,10 +6,11 @@ bufferized writers (and readers?) with log line integrity in mind
 package logio
 
 import (
-	"bindec"
-	"binenc"
 	"bytes"
 	"io"
+
+	"github.com/sirkon/logcarrier/bindec"
+	"github.com/sirkon/logcarrier/binenc"
 )
 
 const (

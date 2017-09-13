@@ -1,17 +1,18 @@
 package main
 
 import (
-	"bindec"
-	"binenc"
-	"bufferer"
 	"bytes"
-	"cheapbuf"
-	"connio"
 	"fmt"
-	"logging"
 	"net"
 	"sync"
 	"time"
+
+	"github.com/sirkon/logcarrier/bindec"
+	"github.com/sirkon/logcarrier/binenc"
+	"github.com/sirkon/logcarrier/bufferer"
+	"github.com/sirkon/logcarrier/cheapbuf"
+	"github.com/sirkon/logcarrier/connio"
+	"github.com/sirkon/logcarrier/logging"
 )
 
 var protocol2Header = []byte("200 READY protocol 2\n")

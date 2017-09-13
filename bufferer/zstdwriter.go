@@ -1,6 +1,6 @@
 package bufferer
 
-import "github.com/Datadog/zstd"
+import "github.com/sirkon/logcarrier/zstd"
 
 // ZSTDWriter hides switching underlying  after logratition
 type ZSTDWriter struct {

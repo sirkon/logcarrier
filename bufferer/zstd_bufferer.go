@@ -1,13 +1,15 @@
 package bufferer
 
 import (
-	"bindec"
-	"binenc"
 	"bytes"
-	"fileio"
-	"frameio"
-	"logio"
+
 	"sync"
+
+	"github.com/sirkon/logcarrier/bindec"
+	"github.com/sirkon/logcarrier/binenc"
+	"github.com/sirkon/logcarrier/fileio"
+	"github.com/sirkon/logcarrier/frameio"
+	"github.com/sirkon/logcarrier/logio"
 )
 
 // ZSTDBufferer ...

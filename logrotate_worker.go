@@ -1,10 +1,11 @@
 package main
 
 import (
-	"logging"
 	"net"
 	"sync"
 	"time"
+
+	"github.com/sirkon/logcarrier/logging"
 )
 
 var errorLogRotate = []byte("400 Error\n")
