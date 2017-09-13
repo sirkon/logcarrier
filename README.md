@@ -6,11 +6,11 @@ Installation:
 go get -u github.com/sirkon/logcarrier
 ```
 
-# What has been added or changed so far
-1. Configured name based on input parameters. Name after log rotation. The best practice though is to initially have time segregated name for original file name and access it via "originally" named link.
-2. Link for a file with similar features (current and after log rotation names)
+# Features
+1. Configured file names based on input parameters. Different setups for "original" and "log rotated" file names.
+2. Link on files with similar features as on regular files.
 3. ZSTD on the fly compression (can be memory hungry).
-4. Log rotation setup. "Guided" log rotation with command from tailer has been left but not recommended. Use `periodic` with cron-style schedule instead.
+4. Log rotation setup. `periodic` is the recommended way, other methods are for compatibility reasons.
 5. Use YAML instead of TOML for config. TOML can be easier to parse but its Go library is pretty poor in error handling and TOML itself doesn't support octal numbers (to describe directory rights) and things like `128Kb` at place.
 
 # Stability and code quality
