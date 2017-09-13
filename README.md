@@ -7,7 +7,7 @@ go get -u github.com/sirkon/logcarrier
 ```
 
 # What has been added or changed so far
-1. Configured name based on input parameters. Name after log rotation.
+1. Configured name based on input parameters. Name after log rotation. The best practice though is to initially have time segregated name for original file name and access it via "originally" named link.
 2. Link for a file with similar features (current and after log rotation names)
 3. ZSTD on the fly compression (can be memory hungry).
 4. Use YAML instead of TOML for config. TOML can be easier to parse but its Go library is pretty poor in error handling and TOML itself doesn't support octal numbers (to describe directory rights) and things like `128Kb` at place.
