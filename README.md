@@ -15,8 +15,8 @@ How it works:
 1. Configured file names based on input parameters. Different setups for "original" and "log rotated" file names.
 2. Link on files with similar features as on regular files.
 3. ZSTD on the fly compression (can be memory hungry).
-4. Log rotation setup. `periodic` is the recommended way, other methods are for compatibility reasons.
-5. Use YAML instead of TOML for config. TOML can be easier to parse but its Go library is pretty poor in error handling and TOML itself doesn't support octal numbers (to describe directory rights) and things like `128Kb` at place.
+4. Log rotation setup. `periodic` is the recommended way, other methods are for compatibility reasons with old app.
+5. Use YAML instead of original TOML for config. TOML can be easier to parse but its Go library is pretty poor in error handling and TOML itself doesn't support octal numbers (to describe directory rights) and things like `128Kb` at place.
 
 # Stability and code quality
 1. The core was written in a couple of days in a hurry, thus some parts of code and design choices are questionable.
@@ -63,12 +63,18 @@ files:
                                               # (date, hour, minute, etc) and use link with "original" file name pointed at the  
                                               # currently writing part
   rotation: /$dir/$name-${ time | %Y%m%d%H }  # Rename to on rotation. This time the same name.
+  notify:                        # Notify section describes queue to put just rotated file names in.
+    type: file                   # Only file is supported now.
+    path: '/tmp/file_rotation'
 
 links:                           # Same as with files
   root: ..
   root_mode: ..
   name: ..
   rotation: ..
+  notify:                       # Same as for files
+    type: file
+    path: '/tmp/file_rotation'
 
 logrotate:
   method: periodic              # Can be `periodic`, `guided` (via protocol) and `both`
