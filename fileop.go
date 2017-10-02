@@ -9,6 +9,7 @@ import (
 	"github.com/LK4D4/trylock"
 	"github.com/sirkon/logcarrier/bufferer"
 	"github.com/sirkon/logcarrier/logging"
+	"github.com/sirkon/logcarrier/notify"
 )
 
 // Buf access
@@ -29,22 +30,26 @@ type FileOp struct {
 	itemsLock *sync.Mutex
 	factory   func(string, string, string) (bufferer.Bufferer, error) // Generates bufferer for a given key
 
-	ticker      *time.Ticker
-	stopChannel chan int
-	wg          *sync.WaitGroup
+	ticker       *time.Ticker
+	stopChannel  chan int
+	wg           *sync.WaitGroup
+	fileNotifier notify.Notifier
+	linkNotifier notify.Notifier
 }
 
 // NewFileOp generates file service
 //   factory creates bufferer object
 //   ticker is used to generate
-func NewFileOp(factory func(string, string, string) (bufferer.Bufferer, error), ticker *time.Ticker) *FileOp {
+func NewFileOp(factory func(string, string, string) (bufferer.Bufferer, error), ticker *time.Ticker, fn, ln notify.Notifier) *FileOp {
 	res := &FileOp{
-		items:       make(map[string]*Buf),
-		itemsLock:   &sync.Mutex{},
-		factory:     factory,
-		ticker:      ticker,
-		stopChannel: make(chan int),
-		wg:          &sync.WaitGroup{},
+		items:        make(map[string]*Buf),
+		itemsLock:    &sync.Mutex{},
+		factory:      factory,
+		ticker:       ticker,
+		stopChannel:  make(chan int),
+		wg:           &sync.WaitGroup{},
+		fileNotifier: fn,
+		linkNotifier: ln,
 	}
 
 	return res
@@ -92,7 +97,7 @@ func (f *FileOp) Logrotate(dir, name, group string) (err error) {
 	if err := buf.Buf.Close(); err != nil {
 		goto exit
 	}
-	err = buf.Buf.Logrotate(dir, name, group)
+	err = buf.Buf.Logrotate(dir, name, group, f.fileNotifier, f.linkNotifier)
 
 exit:
 	buf.Lock.Unlock()

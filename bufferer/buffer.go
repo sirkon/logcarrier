@@ -9,6 +9,7 @@ import (
 
 	"github.com/sirkon/logcarrier/bindec"
 	"github.com/sirkon/logcarrier/binenc"
+	"github.com/sirkon/logcarrier/notify"
 )
 
 // Bufferer is an interface that groups set of methods that are
@@ -28,7 +29,7 @@ type Bufferer interface {
 	PostWrite() error
 
 	// Logrotate rotates underlying log
-	Logrotate(dir, name, group string) error
+	Logrotate(dir, name, group string, fn, ln notify.Notifier) error
 
 	// DumpState dumps the state of the bufferer object
 	DumpState(enc *binenc.Encoder, dest *bytes.Buffer) error

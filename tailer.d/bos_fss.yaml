@@ -1,7 +1,10 @@
 files:
-  bos_fss:
-    - "/home/emacs/Sources/logcarrier/bos_fss.log"
+  syslog:
+    - "/var/log/syslog"
 
 goups_defs:
-  bos_fss:
+  syslog:
     - 12
+
+positon-file: /home/emacs/Tmp/data/tail.pos
+logfile: /home/emacs/Tmp/data/tail.log

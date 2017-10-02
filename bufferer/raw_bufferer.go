@@ -7,6 +7,7 @@ import (
 	"github.com/sirkon/logcarrier/binenc"
 	"github.com/sirkon/logcarrier/fileio"
 	"github.com/sirkon/logcarrier/logio"
+	"github.com/sirkon/logcarrier/notify"
 )
 
 // RawBufferer ...
@@ -55,8 +56,8 @@ func (b *RawBufferer) Flush() error {
 }
 
 // Logrotate implementation
-func (b *RawBufferer) Logrotate(dir, name, group string) error {
-	return b.d.Logrotate(dir, name, group)
+func (b *RawBufferer) Logrotate(dir, name, group string, fn, ln notify.Notifier) error {
+	return b.d.Logrotate(dir, name, group, fn, ln)
 }
 
 // DumpState implementation

@@ -24,7 +24,7 @@ conf = {
   'port': 1466,
   'proxy': None,
   'key': 'key',
-  'position_file' : '/var/tmp/logcarrier-tail',
+  'position_file': '/var/tmp/logcarrier-tail',
   'protocol': 1,
   'connect_timeout': 5,
   'wait_timeout': 60,

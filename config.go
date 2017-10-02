@@ -42,18 +42,20 @@ type Config struct {
 	} `yaml:"workers"`
 
 	Files struct {
-		Root     string      `yaml:"root"`
-		RootMode os.FileMode `yaml:"root_mode"`
-		Name     string      `yaml:"name"`
-		Rotation string      `yaml:"rotation"`
+		Root     string        `yaml:"root"`
+		RootMode os.FileMode   `yaml:"root_mode"`
+		Name     string        `yaml:"name"`
+		Rotation string        `yaml:"rotation"`
+		Notify   yaml.MapSlice `yaml:"notify"`
 	} `yaml:"files"`
 
 	Links struct {
 		enabled  bool
-		Root     string      `yaml:"root"`
-		RootMode os.FileMode `yaml:"root_mode"`
-		Name     string      `yaml:"name"`
-		Rotation string      `yaml:"rotation"`
+		Root     string        `yaml:"root"`
+		RootMode os.FileMode   `yaml:"root_mode"`
+		Name     string        `yaml:"name"`
+		Rotation string        `yaml:"rotation"`
+		Notify   yaml.MapSlice `yaml:"notify"`
 	} `yaml:"links"`
 
 	Logrotate struct {

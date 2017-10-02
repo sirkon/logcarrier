@@ -19,8 +19,28 @@ import (
 	"github.com/sirkon/logcarrier/periodic"
 	"github.com/sirkon/logcarrier/utils"
 
+	"github.com/sirkon/logcarrier/notify"
 	"github.com/sirkon/logcarrier/zstd"
+	"gopkg.in/yaml.v2"
 )
+
+func getNotifier(data yaml.MapSlice) notify.Notifier {
+	var cfg = struct {
+		Type NotifierType `yaml:"type"`
+	}{}
+	b, err := yaml.Marshal(data)
+	if err != nil {
+		panic(err)
+	}
+	if err := yaml.Unmarshal(b, &cfg); err != nil {
+		panic(err)
+	}
+	res, _ := GetNotifier(cfg.Type)
+	if err := res.Init(b); err != nil {
+		panic(err)
+	}
+	return res
+}
 
 func main() {
 	cfgPath := flag.String("c", "/usr/local/etc/logcarrier.toml", "configuration file path")
@@ -60,6 +80,10 @@ func main() {
 	dumpjobs := make(chan DumpJob, cfg.Buffers.Dumps)
 	rotatejobs := make(chan LogrotateJob, cfg.Buffers.Logrotates)
 
+	// Setting up notifiers
+	fileNotifier := getNotifier(cfg.Files.Notify)
+	linkNotifier := getNotifier(cfg.Links.Notify)
+
 	// factory creates bufferers what is needed to buffer incoming data
 	var factory func(string, string, string) (bufferer.Bufferer, error)
 	switch cfg.Compression.Method {
@@ -90,7 +114,7 @@ func main() {
 	// Setting up background services
 	ticker := time.NewTicker(time.Duration(cfg.Workers.FlusherSleep))
 
-	fileops := NewFileOp(factory, ticker)
+	fileops := NewFileOp(factory, ticker, fileNotifier, linkNotifier)
 	go fileops.FlushPeriodic()
 
 	headerpool := NewHeaderPool(headerjobs, dumpjobs, rotatejobs)

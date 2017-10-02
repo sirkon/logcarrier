@@ -14,6 +14,7 @@ import (
 	"github.com/sirkon/logcarrier/bindec"
 	"github.com/sirkon/logcarrier/binenc"
 	"github.com/sirkon/logcarrier/logging"
+	"github.com/sirkon/logcarrier/notify"
 	"github.com/sirkon/logcarrier/paths"
 	"github.com/sirkon/logcarrier/utils"
 )
@@ -140,7 +141,7 @@ func (f *File) Close() error {
 }
 
 // Logrotate ...
-func (f *File) Logrotate(dir, name, group string) error {
+func (f *File) Logrotate(dir, name, group string, fn, ln notify.Notifier) error {
 	rotname := f.namegen.Rotation(dir, name, group, f.time)
 	if f.writeCount == 0 {
 		logging.Info("No data collected in %s, omitting log rotation", rotname)
@@ -164,10 +165,16 @@ func (f *File) Logrotate(dir, name, group string) error {
 	if err := os.Rename(f.fname, rotname); err != nil {
 		return fmt.Errorf("Can't rename file %s => %s: %s", f.fname, rotname, err)
 	}
+	if err := fn.Notify(rotname); err != nil {
+		return err
+	}
 	rotlink := f.linkgen.Rotation(f.dir, f.name, f.group, f.time)
 	if len(rotlink) > 0 {
 		if err := os.Symlink(rotname, rotlink); err != nil {
 			return fmt.Errorf("Can't create symlink %s => %s: %s", rotlink, rotname, err)
+		}
+		if err := ln.Notify(rotlink); err != nil {
+			return err
 		}
 	}
 	return nil
