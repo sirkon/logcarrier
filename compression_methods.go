@@ -37,16 +37,6 @@ func UnsupportedError(data []byte) error {
 	return fmt.Errorf("unsupported compression method `\033[1m%s\033[0m`, use one of %s", text, list)
 }
 
-// UnmarshalYAML toml unmarshalling implementation
-func (i *CompressionMethod) UnmarshalYAML(unmarshal func(interface{}) error) error {
-	// value, ok := compressionMapping[string(text)]
-	// if !ok {
-	// 	return UnsupportedError(text)
-	// }
-	// *i = value
-	return nil
-}
-
 // String ...
 func (i CompressionMethod) String() string {
 	switch i {
@@ -57,4 +47,14 @@ func (i CompressionMethod) String() string {
 	default:
 		panic(fmt.Errorf("Unsupported compression code %d", i))
 	}
+}
+
+// UnmarshalText toml unmarshalling implementation
+func (i *CompressionMethod) UnmarshalText(rawText []byte) error {
+	value, ok := compressionMapping[string(rawText)]
+	if !ok {
+		return UnsupportedError(rawText)
+	}
+	*i = value
+	return nil
 }

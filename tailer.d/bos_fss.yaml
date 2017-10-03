@@ -1,9 +1,9 @@
 files:
-  syslog:
-    - "/var/log/syslog"
+  manual:
+    - "/home/emacs/Sources/go/src/github.com/sirkon/logcarrier/manual"
 
-goups_defs:
-  syslog:
+groups_defs:
+  manual:
     - 12
 
 positon-file: /home/emacs/Tmp/data/tail.pos
