@@ -74,7 +74,7 @@ links:                           # Same as with files
   rotation: ..
   notify:                       # Same as for files
     type: file
-    path: '/tmp/file_rotation'
+    path: '/tmp/link_rotation'
 
 logrotate:
   method: periodic              # Can be `periodic`, `guided` (via protocol) and `both`
