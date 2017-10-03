@@ -16,6 +16,7 @@ How it works:
 2. Link on files with similar features as on regular files.
 3. ZSTD on the fly compression (can be memory hungry).
 4. Log rotation setup. `periodic` is the recommended way, other methods are for compatibility reasons with old app.
+4. Notification with rotated name can be sent after each rotated file and/or link.
 5. Use YAML instead of original TOML for config. TOML can be easier to parse but its Go library is pretty poor in error handling and TOML itself doesn't support octal numbers (to describe directory rights) and things like `128Kb` at place.
 
 # Stability and code quality
