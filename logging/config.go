@@ -2,8 +2,8 @@ package logging
 
 // Config настройки логирования
 type Config struct {
-	Logfile string `toml:"logfile"`
-	Level   string `toml:"level"` // default:"debug"
+	Logfile string `yaml:"logfile"`
+	Level   string `yaml:"level"` // default:"debug"
 }
 
 // NewConfig возвращает инстанс Config

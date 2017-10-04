@@ -8,7 +8,7 @@ import (
 // Size is used to represent buffer size values
 type Size uint64
 
-// UnmarshalText toml unmarshalling implementation
+// UnmarshalText yaml unmarshalling implementation
 func (s *Size) UnmarshalText(rawText []byte) error {
 	text := string(rawText)
 	var pos int

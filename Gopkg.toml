@@ -80,3 +80,15 @@
 [[constraint]]
   branch = "master"
   name = "github.com/sirkon/gotailer"
+
+[[constraint]]
+  name = "github.com/sirkon/bindec"
+  version = "1.0.0"
+
+[[constraint]]
+  name = "github.com/sirkon/binenc"
+  version = "1.0.0"
+
+[[constraint]]
+  name = "github.com/sirkon/go-format"
+  version = "1.0.0"

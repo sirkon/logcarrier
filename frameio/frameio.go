@@ -12,8 +12,8 @@ import (
 	"bytes"
 	"io"
 
-	"github.com/sirkon/logcarrier/bindec"
-	"github.com/sirkon/logcarrier/binenc"
+	"github.com/sirkon/bindec"
+	"github.com/sirkon/binenc"
 )
 
 const (

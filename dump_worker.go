@@ -7,8 +7,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/sirkon/logcarrier/bindec"
-	"github.com/sirkon/logcarrier/binenc"
+	"github.com/sirkon/bindec"
+	"github.com/sirkon/binenc"
 	"github.com/sirkon/logcarrier/bufferer"
 	"github.com/sirkon/logcarrier/cheapbuf"
 	"github.com/sirkon/logcarrier/connio"

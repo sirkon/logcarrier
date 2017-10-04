@@ -11,8 +11,8 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/sirkon/logcarrier/bindec"
-	"github.com/sirkon/logcarrier/binenc"
+	"github.com/sirkon/bindec"
+	"github.com/sirkon/binenc"
 	"github.com/sirkon/logcarrier/logging"
 	"github.com/sirkon/logcarrier/notify"
 	"github.com/sirkon/logcarrier/paths"

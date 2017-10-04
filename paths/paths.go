@@ -4,7 +4,7 @@ import (
 	"path/filepath"
 	"time"
 
-	format "github.com/sirkon/logcarrier/formatter"
+	format "github.com/sirkon/go-format"
 )
 
 // Paths is an interface for path name generation
@@ -21,7 +21,7 @@ func frmt(fr, root, dir, name, group string, t time.Time) string {
 	bctx.AddString("name", name)
 	bctx.AddString("group", group)
 	bctx.AddTime("time", t)
-	ctx, err := bctx.BuildContext()
+	ctx, err := bctx.Build()
 	if err != nil {
 		panic(err)
 	}

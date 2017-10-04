@@ -2,12 +2,6 @@
 
 
 [[projects]]
-  name = "github.com/BurntSushi/toml"
-  packages = ["."]
-  revision = "b26d9c308763d68093482582cea63d69be07a0f0"
-  version = "v0.3.0"
-
-[[projects]]
   branch = "master"
   name = "github.com/LK4D4/trylock"
   packages = ["."]
@@ -27,15 +21,39 @@
 
 [[projects]]
   branch = "master"
-  name = "github.com/jehiah/go-strftime"
+  name = "github.com/lestrrat/go-strftime"
   packages = ["."]
-  revision = "2efbe75097a505e2789f7e39cb9da067b5be8e3e"
+  revision = "04ef93e285313c8978cbc7cad26d2aa7a9927451"
+
+[[projects]]
+  name = "github.com/pkg/errors"
+  packages = ["."]
+  revision = "645ef00459ed84a119197bfb8d8205042c6df63d"
+  version = "v0.8.0"
 
 [[projects]]
   name = "github.com/pmezard/go-difflib"
   packages = ["difflib"]
   revision = "792786c7400a136282c1664665ae0a8db921c6c2"
   version = "v1.0.0"
+
+[[projects]]
+  name = "github.com/sirkon/bindec"
+  packages = ["."]
+  revision = "9b17d71ea2d06024dbfb3169b2ea57255f78168a"
+  version = "v1.0"
+
+[[projects]]
+  name = "github.com/sirkon/binenc"
+  packages = ["."]
+  revision = "69993b983821f04009b7fd317e23ffe267cf736f"
+  version = "v1.0"
+
+[[projects]]
+  name = "github.com/sirkon/go-format"
+  packages = ["."]
+  revision = "823b5a9afed85a97912db12ce3834b40deff3c3c"
+  version = "v1.0"
 
 [[projects]]
   name = "github.com/sirupsen/logrus"
@@ -76,6 +94,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "a0d2cbaa153481b561b235ee2e63366c104cac0659ce0bdd47b6ee9626b07eb6"
+  inputs-digest = "180ac8e0d365e8952ea5ea3e941b0b7915d4428104b1ed896e431e5dcd20bc62"
   solver-name = "gps-cdcl"
   solver-version = 1

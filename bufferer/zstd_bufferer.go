@@ -5,8 +5,8 @@ import (
 
 	"sync"
 
-	"github.com/sirkon/logcarrier/bindec"
-	"github.com/sirkon/logcarrier/binenc"
+	"github.com/sirkon/bindec"
+	"github.com/sirkon/binenc"
 	"github.com/sirkon/logcarrier/fileio"
 	"github.com/sirkon/logcarrier/frameio"
 	"github.com/sirkon/logcarrier/logio"

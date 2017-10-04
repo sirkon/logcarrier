@@ -3,8 +3,8 @@ package bufferer
 import (
 	"bytes"
 
-	"github.com/sirkon/logcarrier/bindec"
-	"github.com/sirkon/logcarrier/binenc"
+	"github.com/sirkon/bindec"
+	"github.com/sirkon/binenc"
 	"github.com/sirkon/logcarrier/fileio"
 	"github.com/sirkon/logcarrier/logio"
 	"github.com/sirkon/logcarrier/notify"

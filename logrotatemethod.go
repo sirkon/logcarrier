@@ -34,17 +34,18 @@ func (lm LogrotateMethod) String() string {
 	}
 }
 
-// UnmarshalYAML toml unmarshalling implementation
-func (lm *LogrotateMethod) UnmarshalYAML(unmarshal func(interface{}) error) error {
-	// choices := map[string]LogrotateMethod{
-	// 	LogrotatePeriodic.String(): LogrotatePeriodic,
-	// 	LogrotateGuided.String():   LogrotateGuided,
-	// 	LogrotateBoth.String():     LogrotateBoth,
-	// }
-	// method, ok := choices[*(*string)(unsafe.Pointer(&text))]
-	// if !ok {
-	// 	return fmt.Errorf("Unsupported log rotation type `\033[1m%s\033[0m`", string(text))
-	// }
-	// *lm = method
+var rotMethodMap = map[string]LogrotateMethod{
+	LogrotatePeriodic.String(): LogrotatePeriodic,
+	LogrotateGuided.String():   LogrotateGuided,
+	LogrotateBoth.String():     LogrotateBoth,
+}
+
+// UnmarshalText yaml unmarshalling implementation
+func (lm *LogrotateMethod) UnmarshalText(rawtext []byte) error {
+	res, ok := rotMethodMap[string(rawtext)]
+	if !ok {
+		return fmt.Errorf("unsupported rotation method `\033[1m%s\033[0m`", string(rawtext))
+	}
+	*lm = res
 	return nil
 }
