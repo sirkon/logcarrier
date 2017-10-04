@@ -43,7 +43,7 @@ func getNotifier(data yaml.MapSlice) notify.Notifier {
 }
 
 func main() {
-	cfgPath := flag.String("c", "/usr/local/etc/logcarrier.toml", "configuration file path")
+	cfgPath := flag.String("c", "/usr/local/etc/logcarrier.yaml", "configuration file path")
 	flag.Parse()
 
 	cfg := LoadConfig(*cfgPath)
