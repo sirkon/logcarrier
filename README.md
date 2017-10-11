@@ -9,7 +9,7 @@ go get -u github.com/sirkon/logcarrier
 Carry logs from remote machines into one place
 
 #### How it works
-1. There are [tailers](tail/logcarrier-tail.py) sending log data to logcarrier server
+1. There are [tailers](https://github.com/Boiler/logcarrier/tree/master/tail) sending log data to logcarrier server
 2. `logcarrier` server what receives these files and save them under arbitrary names, optionally making links to them and:
     1. optional ZSTD compression
     2. mandatory logrotation at customizable schedule
