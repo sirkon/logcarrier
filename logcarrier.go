@@ -81,15 +81,17 @@ func main() {
 	rotatejobs := make(chan LogrotateJob, cfg.Buffers.Logrotates)
 
 	// Setting up notifiers
-	fileNotifier := getNotifier(cfg.Files.Notify)
-	linkNotifier := getNotifier(cfg.Links.Notify)
+	fileBefore := getNotifier(cfg.Files.Before)
+	fileAfter := getNotifier(cfg.Files.After)
+	linkBefore := getNotifier(cfg.Links.Before)
+	linkeAfter := getNotifier(cfg.Links.After)
 
 	// factory creates bufferers what is needed to buffer incoming data
 	var factory func(string, string, string) (bufferer.Bufferer, error)
 	switch cfg.Compression.Method {
 	case ZStd:
 		factory = func(dir, name, group string) (bufferer.Bufferer, error) {
-			d, err := fileio.Open(dir, name, group, fnamegens, lnamegens, cfg.Files.RootMode)
+			d, err := fileio.Open(dir, name, group, fnamegens, lnamegens, cfg.Files.RootMode, fileBefore, linkBefore)
 			if err != nil {
 				return nil, err
 			}
@@ -102,7 +104,7 @@ func main() {
 		}
 	case Raw:
 		factory = func(dir, name, group string) (bufferer.Bufferer, error) {
-			d, err := fileio.Open(dir, name, group, fnamegens, lnamegens, cfg.Files.RootMode)
+			d, err := fileio.Open(dir, name, group, fnamegens, lnamegens, cfg.Files.RootMode, fileBefore, linkBefore)
 			if err != nil {
 				return nil, err
 			}
@@ -114,7 +116,9 @@ func main() {
 	// Setting up background services
 	ticker := time.NewTicker(time.Duration(cfg.Workers.FlusherSleep))
 
-	fileops := NewFileOp(factory, ticker, fileNotifier, linkNotifier)
+	fileNotifiers := NewNotifier(fileBefore, fileAfter)
+	linkNotifiers := NewNotifier(linkBefore, linkeAfter)
+	fileops := NewFileOp(factory, ticker, fileNotifiers, linkNotifiers)
 	go fileops.FlushPeriodic()
 
 	headerpool := NewHeaderPool(headerjobs, dumpjobs, rotatejobs)

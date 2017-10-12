@@ -24,32 +24,45 @@ type Buf struct {
 	Counter int
 }
 
+// Notifier for file operation events
+type Notifier struct {
+	Before notify.Notifier
+	After  notify.Notifier
+}
+
+// NewNotifier constructor
+func NewNotifier(before, after notify.Notifier) Notifier {
+	return Notifier{Before: before,
+		After: after,
+	}
+}
+
 // FileOp suit to work with files (append data to files, logrotate them)
 type FileOp struct {
 	items     map[string]*Buf
 	itemsLock *sync.Mutex
 	factory   func(string, string, string) (bufferer.Bufferer, error) // Generates bufferer for a given key
 
-	ticker       *time.Ticker
-	stopChannel  chan int
-	wg           *sync.WaitGroup
-	fileNotifier notify.Notifier
-	linkNotifier notify.Notifier
+	ticker      *time.Ticker
+	stopChannel chan int
+	wg          *sync.WaitGroup
+	file        Notifier
+	link        Notifier
 }
 
 // NewFileOp generates file service
 //   factory creates bufferer object
 //   ticker is used to generate
-func NewFileOp(factory func(string, string, string) (bufferer.Bufferer, error), ticker *time.Ticker, fn, ln notify.Notifier) *FileOp {
+func NewFileOp(factory func(string, string, string) (bufferer.Bufferer, error), ticker *time.Ticker, file, link Notifier) *FileOp {
 	res := &FileOp{
-		items:        make(map[string]*Buf),
-		itemsLock:    &sync.Mutex{},
-		factory:      factory,
-		ticker:       ticker,
-		stopChannel:  make(chan int),
-		wg:           &sync.WaitGroup{},
-		fileNotifier: fn,
-		linkNotifier: ln,
+		items:       make(map[string]*Buf),
+		itemsLock:   &sync.Mutex{},
+		factory:     factory,
+		ticker:      ticker,
+		stopChannel: make(chan int),
+		wg:          &sync.WaitGroup{},
+		file:        file,
+		link:        link,
 	}
 
 	return res
@@ -97,7 +110,7 @@ func (f *FileOp) Logrotate(dir, name, group string) (err error) {
 	if err := buf.Buf.Close(); err != nil {
 		goto exit
 	}
-	err = buf.Buf.Logrotate(dir, name, group, f.fileNotifier, f.linkNotifier)
+	err = buf.Buf.Logrotate(dir, name, group, f.file.After, f.link.After)
 
 exit:
 	buf.Lock.Unlock()

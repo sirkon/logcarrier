@@ -46,7 +46,8 @@ type Config struct {
 		RootMode os.FileMode   `yaml:"root_mode"`
 		Name     string        `yaml:"name"`
 		Rotation string        `yaml:"rotation"`
-		Notify   yaml.MapSlice `yaml:"notify"`
+		Before   yaml.MapSlice `yaml:"before"`
+		After    yaml.MapSlice `yaml:"after"`
 	} `yaml:"files"`
 
 	Links struct {
@@ -55,7 +56,8 @@ type Config struct {
 		RootMode os.FileMode   `yaml:"root_mode"`
 		Name     string        `yaml:"name"`
 		Rotation string        `yaml:"rotation"`
-		Notify   yaml.MapSlice `yaml:"notify"`
+		Before   yaml.MapSlice `yaml:"before"`
+		After    yaml.MapSlice `yaml:"after"`
 	} `yaml:"links"`
 
 	Logrotate struct {

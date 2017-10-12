@@ -66,8 +66,11 @@ files:
                                               # (date, hour, minute, etc) and use link with "original" file name pointed at the  
                                               # currently writing part
   rotation: /$dir/$name-${ time | %Y%m%d%H }  # Rename to on rotation. This time the same name
-  notify:                        # Notify section describes queue to put just rotated file names in.
+  before:                        # Describes a queue to put just created file names in
     type: file                   # Only file is supported now.
+    path: "/tmp/file_creation" 
+  after:                         # Describes a queue to put just rotated file names in.
+    type: file                   
     path: '/tmp/file_rotation'
 
 links:                           # Same as with files
@@ -75,16 +78,20 @@ links:                           # Same as with files
   root_mode: ..
   name: ..
   rotation: ..
-  notify:                       # Same as for files
+  before:
     type: file
-    path: '/tmp/file_rotation'
+    path: '/tmp/link_creation'
+  after:                         # Same as for files
+    type: file
+    path: '/tmp/link_rotation'
 
 logrotate:
-  method: periodic              # Can be `periodic`, `guided` (via protocol) and `both`
-  schedule: "* */1 * * *"       # Log rotation start schedule
+  method: periodic               # Can be `periodic`, `guided` (via protocol) and `both`
+  schedule: "* */1 * * *"        # Log rotation start schedule
 ```
 
-# What notifies are for?
+# What before and after notifies are for?
 
-They are used to signal what files are ready. I planned this feature for further log parsing – all files are placed in
-the same directory and there should be a way to find new ones.  
+They are used to signal what file/link is started to feeding up and what file/link is logrotated and will not be fed up
+anymore. This can be used for tailing where we read from `before` queue to know files that are filling up now and stop
+tailing ones that are enlisted in the `after` queue.

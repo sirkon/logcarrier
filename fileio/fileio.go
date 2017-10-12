@@ -21,9 +21,11 @@ import (
 
 // File object that is steady against rotating.
 type File struct {
-	namegen paths.Paths
-	linkgen paths.Paths
-	dirmode os.FileMode
+	namegen      paths.Paths
+	linkgen      paths.Paths
+	dirmode      os.FileMode
+	fileNotifier notify.Notifier
+	linkNotifier notify.Notifier
 
 	fname string
 	link  string
@@ -38,11 +40,13 @@ type File struct {
 }
 
 // Open File constructor
-func Open(dir, name, group string, namegen, linkgen paths.Paths, dirmode os.FileMode) (*File, error) {
+func Open(dir, name, group string, namegen, linkgen paths.Paths, dirmode os.FileMode, fileNotifier, linkNotifier notify.Notifier) (*File, error) {
 	file := &File{
-		namegen: namegen,
-		linkgen: linkgen,
-		dirmode: dirmode,
+		namegen:      namegen,
+		linkgen:      linkgen,
+		dirmode:      dirmode,
+		fileNotifier: fileNotifier,
+		linkNotifier: linkNotifier,
 
 		dir:   dir,
 		name:  name,
@@ -74,6 +78,9 @@ func (f *File) open() (err error) {
 	file, err := os.OpenFile(fname, os.O_CREATE|os.O_APPEND|os.O_RDWR, os.FileMode(0644))
 	if err != nil {
 		return
+	}
+	if err := f.fileNotifier.Notify(fname); err != nil {
+		logging.Error("Cannot feed a file creation queue: %s", err)
 	}
 
 	lname := f.linkgen.Name(f.dir, f.name, f.group, t)
@@ -108,6 +115,9 @@ func (f *File) open() (err error) {
 				return err
 			}
 		}
+	}
+	if err := f.linkNotifier.Notify(lname); err != nil {
+		return fmt.Errorf("Cannot feed a link creation queue: %s", err)
 	}
 
 	f.file = file
