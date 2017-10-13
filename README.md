@@ -22,7 +22,7 @@ Carry logs from remote machines into one place
 5. Use YAML instead of original TOML for config. TOML can be easier to parse but its Go library is pretty poor in error handling and TOML itself doesn't support octal numbers (to describe directory rights) and things like `128Kb` at place.
 
 # Stability and code quality
-1. The core was written in a couple of days in a hurry, thus some parts of code and design choices are questionable.
+1. The core was written in a couple of days in a hurry, thus some design choices are questionable (I would call them wrong in fact) and to be rewritten. The functionality won't change much though.
 2. I quit my job I was writing this for and prefered not to contact them after that, so there were no real tests. `raw` compression method should work though, not so sure about `zstd` - previous version which was based on vanilla ZSTD library worked, current one uses tweaked library version to implement rollback functionality.
 
 Anyway, feel free to report and contribute.
