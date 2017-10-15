@@ -110,6 +110,10 @@ func (f *FileOp) Logrotate(dir, name, group string) (err error) {
 	if err := buf.Buf.Close(); err != nil {
 		goto exit
 	}
+	err = buf.Buf.Flush()
+	if err != nil {
+		goto exit
+	}
 	err = buf.Buf.Logrotate(dir, name, group, f.file.After, f.link.After)
 
 exit:
